@@ -207,14 +207,14 @@ export default function ConversationPage() {
   }
 
   const getConversationName = () => {
-    if (!currentConversation || !user) return 'Chat'
+    if (!currentConversation || !user) return 'Чат'
     
     if (currentConversation.isGroup) {
-      return currentConversation.name || 'Group Chat'
+      return currentConversation.name || 'Групповой чат'
     }
     
     const otherUser = currentConversation.users.find(u => u.id !== user.id)
-    return otherUser?.username || 'Unknown User'
+    return otherUser?.username || 'Неизвестный пользователь'
   }
 
   const getOtherUserStatus = () => {
@@ -222,7 +222,7 @@ export default function ConversationPage() {
     
     const otherUser = currentConversation.users.find(u => u.id !== user.id)
     const isOnline = otherUser?.status === 'ONLINE' || otherUser?.isOnline
-    return isOnline ? 'Online' : 'Offline'
+    return isOnline ? 'В сети' : 'Не в сети'
   }
 
   const isAdmin = currentConversation?.adminId === user?.id
@@ -231,12 +231,12 @@ export default function ConversationPage() {
     return (
       <div className="h-screen flex bg-gray-50 dark:bg-gray-900 overflow-hidden">
         <Sidebar>
-          <div className="p-4 text-gray-500 dark:text-gray-400">Loading...</div>
+          <div className="p-4 text-gray-500 dark:text-gray-400">Загрузка...</div>
         </Sidebar>
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mb-4"></div>
-            <p className="text-gray-500 dark:text-gray-400">Loading conversation...</p>
+            <p className="text-gray-500 dark:text-gray-400">Загрузка диалога...</p>
           </div>
         </div>
       </div>
@@ -275,10 +275,10 @@ export default function ConversationPage() {
                 )}
                 {currentConversation?.isGroup && (
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    {currentConversation.users.length} members
+                    {currentConversation.users.length} участников
                     {isAdmin && (
                       <span className="ml-2 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full">
-                        Admin
+                        Админ
                       </span>
                     )}
                   </p>
@@ -291,23 +291,23 @@ export default function ConversationPage() {
                   <button
                     onClick={() => setShowAddMembers(true)}
                     className="flex items-center gap-2 px-3 py-1.5 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                    title="Add Members"
+                    title="Добавить участников"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
-                    <span className="hidden sm:inline">Add Members</span>
+                    <span className="hidden sm:inline">Добавить участников</span>
                   </button>
                   <button
                     onClick={() => setShowGroupSettings(true)}
                     className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                    title="Group Settings"
+                    title="Настройки группы"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    <span className="hidden sm:inline">Settings</span>
+                    <span className="hidden sm:inline">Настройки</span>
                   </button>
                 </div>
               )}

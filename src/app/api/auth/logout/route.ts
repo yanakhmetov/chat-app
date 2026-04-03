@@ -5,11 +5,11 @@ export async function POST(req: NextRequest) {
     // Clear any server-side sessions if needed
     // In this implementation, we rely on client-side token removal
     
-    return NextResponse.json({ message: 'Logged out successfully' })
+    return NextResponse.json({ message: 'Выход выполнен успешно' })
   } catch (error) {
     console.error('Logout error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Внутренняя ошибка сервера' },
       { status: 500 }
     )
   }

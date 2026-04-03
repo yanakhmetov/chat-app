@@ -13,10 +13,10 @@ export default function RegisterPage() {
             </svg>
           </div>
           <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-            Create your account
+            Создайте свой аккаунт
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Join ChatApp and start connecting with friends
+            Присоединяйтесь к ChatApp и начните общаться с друзьями
           </p>
         </div>
         
@@ -28,18 +28,18 @@ export default function RegisterPage() {
           </div>
           <div className="relative flex justify-center text-sm">
             <span className="px-2 bg-transparent text-gray-500 dark:text-gray-400">
-              Already have an account?
+              Уже есть аккаунт?
             </span>
           </div>
         </div>
         
         <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-          Already have an account?{' '}
+          Уже есть аккаунт?{' '}
           <Link 
             href="/login" 
             className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
           >
-            Sign in
+            Войти
           </Link>
         </p>
       </div>

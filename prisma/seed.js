@@ -9,16 +9,16 @@ async function hashPassword(password) {
 }
 
 async function main() {
-  console.log('🌱 Starting seed...')
+  console.log('Начало заполнения базы данных...')
 
-  const hashedPassword = await hashPassword('password123')
+  const hashedPassword = await hashPassword(' ')
 
-  // Создаем 6 пользователей
+  // Создаём 6 пользователей с русскими именами и фамилиями
   const users = await Promise.all([
     prisma.user.create({
       data: {
-        email: 'alex@example.com',
-        username: 'AlexJohnson',
+        email: 'alexey.sokolov@example.com',
+        username: 'Алексей Соколов',
         password: hashedPassword,
         avatarUrl: null,
         status: 'ONLINE',
@@ -27,8 +27,8 @@ async function main() {
     }),
     prisma.user.create({
       data: {
-        email: 'emma@example.com',
-        username: 'EmmaWilson',
+        email: 'ekaterina.ivanova@example.com',
+        username: 'Екатерина Иванова',
         password: hashedPassword,
         avatarUrl: null,
         status: 'ONLINE',
@@ -37,8 +37,8 @@ async function main() {
     }),
     prisma.user.create({
       data: {
-        email: 'michael@example.com',
-        username: 'MichaelBrown',
+        email: 'mikhail.petrov@example.com',
+        username: 'Михаил Петров',
         password: hashedPassword,
         avatarUrl: null,
         status: 'ONLINE',
@@ -47,8 +47,8 @@ async function main() {
     }),
     prisma.user.create({
       data: {
-        email: 'sophia@example.com',
-        username: 'SophiaDavis',
+        email: 'sofia.kuznetsova@example.com',
+        username: 'София Кузнецова',
         password: hashedPassword,
         avatarUrl: null,
         status: 'OFFLINE',
@@ -57,8 +57,8 @@ async function main() {
     }),
     prisma.user.create({
       data: {
-        email: 'james@example.com',
-        username: 'JamesMiller',
+        email: 'dmitry.smirnov@example.com',
+        username: 'Дмитрий Смирнов',
         password: hashedPassword,
         avatarUrl: null,
         status: 'OFFLINE',
@@ -67,8 +67,8 @@ async function main() {
     }),
     prisma.user.create({
       data: {
-        email: 'olivia@example.com',
-        username: 'OliviaTaylor',
+        email: 'anna.vasilyeva@example.com',
+        username: 'Анна Васильева',
         password: hashedPassword,
         avatarUrl: null,
         status: 'AWAY',
@@ -77,18 +77,18 @@ async function main() {
     })
   ])
 
-  console.log(`✅ Created ${users.length} users:`)
+  console.log(`Создано ${users.length} пользователей:`)
   users.forEach(user => {
     console.log(`   - ${user.username} (${user.email}) - ${user.status}`)
   })
 
-  // Создаем общую группу
+  // Создаём общую группу (администратор — первый пользователь)
   const adminUser = users[0]
   const groupUsers = users
 
   const groupConversation = await prisma.conversation.create({
     data: {
-      name: 'Team Chat 💬',
+      name: 'Общий чат',
       isGroup: true,
       adminId: adminUser.id,
       users: {
@@ -97,14 +97,14 @@ async function main() {
     }
   })
 
-  console.log(`\n✅ Created group: "${groupConversation.name}"`)
-  console.log(`   Admin: ${adminUser.username}`)
-  console.log(`   Members: ${groupUsers.length} users`)
+  console.log(`\nСоздана группа: "${groupConversation.name}"`)
+  console.log(`   Администратор: ${adminUser.username}`)
+  console.log(`   Участники: ${groupUsers.length} пользователей`)
 
-  // Создаем приватные чаты
+  // Создаём приватные чаты
   const privateChats = []
   
-  // Alex и Emma
+  // Алексей и Екатерина
   const chat1 = await prisma.conversation.create({
     data: {
       isGroup: false,
@@ -118,9 +118,9 @@ async function main() {
     }
   })
   privateChats.push({ id: chat1.id, user1: users[0], user2: users[1] })
-  console.log(`✅ Created private chat between ${users[0].username} and ${users[1].username}`)
+  console.log(`Создан приватный чат между ${users[0].username} и ${users[1].username}`)
   
-  // Alex и Michael
+  // Алексей и Михаил
   const chat2 = await prisma.conversation.create({
     data: {
       isGroup: false,
@@ -134,9 +134,9 @@ async function main() {
     }
   })
   privateChats.push({ id: chat2.id, user1: users[0], user2: users[2] })
-  console.log(`✅ Created private chat between ${users[0].username} and ${users[2].username}`)
+  console.log(`Создан приватный чат между ${users[0].username} и ${users[2].username}`)
   
-  // Emma и Michael
+  // Екатерина и Михаил
   const chat3 = await prisma.conversation.create({
     data: {
       isGroup: false,
@@ -150,32 +150,32 @@ async function main() {
     }
   })
   privateChats.push({ id: chat3.id, user1: users[1], user2: users[2] })
-  console.log(`✅ Created private chat between ${users[1].username} and ${users[2].username}`)
+  console.log(`Создан приватный чат между ${users[1].username} и ${users[2].username}`)
 
-  // Создаем сообщения в групповом чате
+  // Сообщения в групповом чате
   const groupMessages = [
     {
-      content: "Welcome everyone to the team chat! 🎉",
+      content: "Добро пожаловать в общий чат!",
       senderId: users[0].id,
       conversationId: groupConversation.id,
     },
     {
-      content: "Thanks for adding me! Happy to be here 😊",
+      content: "Спасибо за приглашение! Рад быть здесь!",
       senderId: users[1].id,
       conversationId: groupConversation.id,
     },
     {
-      content: "Great to have this group! When's our next meeting?",
+      content: "Отлично, что есть эта группа! Когда наша следующая встреча?",
       senderId: users[2].id,
       conversationId: groupConversation.id,
     },
     {
-      content: "We have a meeting tomorrow at 10 AM. I'll send the link 🔗",
+      content: "У нас встреча завтра в 10:00. Я отправлю ссылку",
       senderId: users[0].id,
       conversationId: groupConversation.id,
     },
     {
-      content: "Perfect! Looking forward to it 👍",
+      content: "Отлично! Жду с нетерпением)",
       senderId: users[3].id,
       conversationId: groupConversation.id,
     },
@@ -186,27 +186,27 @@ async function main() {
       data: message
     })
   }
-  console.log(`\n✅ Created ${groupMessages.length} messages in group chat`)
+  console.log(`\nСоздано ${groupMessages.length} сообщений в групповом чате`)
 
-  // Создаем сообщения в приватных чатах
+  // Сообщения в приватных чатах (имена адаптированы под новых пользователей)
   const privateMessages = [
     {
-      content: "Hey Emma, how's the project going?",
+      content: "Привет, Екатерина! Как продвигается проект?",
       senderId: users[0].id,
       conversationId: privateChats[0].id,
     },
     {
-      content: "Hi Alex! Going well, just finishing the documentation 📝",
+      content: "Привет, Алексей! Всё хорошо, заканчиваю документацию",
       senderId: users[1].id,
       conversationId: privateChats[0].id,
     },
     {
-      content: "Michael, can you review my PR?",
+      content: "Михаил, можешь проверить мой PR?",
       senderId: users[0].id,
       conversationId: privateChats[1].id,
     },
     {
-      content: "Sure thing! I'll take a look now 👀",
+      content: "Конечно! Смотрю сейчас",
       senderId: users[2].id,
       conversationId: privateChats[1].id,
     },
@@ -217,21 +217,21 @@ async function main() {
       data: message
     })
   }
-  console.log(`✅ Created ${privateMessages.length} messages in private chats`)
+  console.log(`Создано ${privateMessages.length} сообщений в приватных чатах`)
 
   // Статистика
   const totalUsers = await prisma.user.count()
   const totalConversations = await prisma.conversation.count()
   const totalMessages = await prisma.message.count()
 
-  console.log('\n📊 Database Statistics:')
-  console.log(`   Users: ${totalUsers}`)
-  console.log(`   Conversations: ${totalConversations}`)
-  console.log(`   Messages: ${totalMessages}`)
-  console.log('\n✨ Seed completed successfully!')
-  console.log('\n🔑 Test credentials (all users):')
-  console.log('   Password: password123')
-  console.log('\n📝 Example logins:')
+  console.log('\n Статистика базы данных:')
+  console.log(`   Пользователи: ${totalUsers}`)
+  console.log(`   Беседы: ${totalConversations}`)
+  console.log(`   Сообщения: ${totalMessages}`)
+  console.log('\n Заполнение базы данных успешно завершено!')
+  console.log('\n Тестовые учетные данные (для всех пользователей):')
+  console.log('   Пароль: password123')
+  console.log('\n Примеры для входа:')
   users.forEach(user => {
     console.log(`   - ${user.email} (${user.username})`)
   })

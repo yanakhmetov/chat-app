@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     
     if (!user) {
       return NextResponse.json(
-        { error: 'Invalid credentials' },
+        { error: 'Неверные учетные данные' },
         { status: 401 }
       )
     }
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     
     if (!isValid) {
       return NextResponse.json(
-        { error: 'Invalid credentials' },
+        { error: 'Неверные учетные данные' },
         { status: 401 }
       )
     }
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Login error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Внутренняя ошибка сервера' },
       { status: 500 }
     )
   }

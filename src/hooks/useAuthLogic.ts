@@ -40,7 +40,7 @@ export function useAuthLogic() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Login failed')
+        throw new Error(data.error || 'Ошибка входа')
       }
 
       localStorage.setItem('token', data.token)
@@ -63,7 +63,7 @@ export function useAuthLogic() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Registration failed')
+        throw new Error(data.error || 'Ошибка регистрации')
       }
 
       localStorage.setItem('token', data.token)

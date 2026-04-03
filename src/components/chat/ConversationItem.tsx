@@ -27,10 +27,10 @@ export default function ConversationItem({
 }: ConversationItemProps) {
   const getDisplayName = () => {
     if (isGroup) {
-      return name || 'Group Chat'
+      return name || 'Групповой чат'
     }
     const otherUser = users.find(u => u.id !== currentUserId)
-    return otherUser?.username || 'Unknown User'
+    return otherUser?.username || 'Неизвестный пользователь'
   }
 
   const getAvatar = () => {
@@ -69,10 +69,10 @@ export default function ConversationItem({
   }
 
   const getLastMessageText = () => {
-    if (!lastMessage) return 'No messages yet'
+    if (!lastMessage) return 'Пока нет сообщений'
     
     const isOwn = lastMessage.senderId === currentUserId
-    const senderName = isOwn ? 'You' : (lastMessage.sender?.username || 'Unknown')
+    const senderName = isOwn ? 'Вы' : (lastMessage.sender?.username || 'Неизвестный')
     const content = lastMessage.content.substring(0, 30)
     const suffix = lastMessage.content.length > 30 ? '...' : ''
     

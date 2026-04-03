@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     const user = await getSession(token)
     
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
     
     const conversations = await prisma.conversation.findMany({
@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error('Get conversations error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+        { error: 'Внутренняя ошибка сервера' },
       { status: 500 }
     )
   }
@@ -76,14 +76,14 @@ export async function POST(req: NextRequest) {
     const currentUser = await getSession(token)
     
     if (!currentUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
     
     const { userIds, isGroup, name } = await req.json()
     
     if (!userIds || !Array.isArray(userIds)) {
       return NextResponse.json(
-        { error: 'Invalid user IDs' },
+        { error: 'Неверные ID пользователей' },
         { status: 400 }
       )
     }
@@ -149,7 +149,7 @@ export async function POST(req: NextRequest) {
     // Создаем новый conversation
     const conversation = await prisma.conversation.create({
       data: {
-        name: isGroup ? (name || 'Group Chat') : null,
+        name: isGroup ? (name || 'Групповой чат') : null,
         isGroup: isGroup || false,
         adminId: isGroup ? currentUser.id : null, // Только для групп устанавливаем админа
         users: {
@@ -172,7 +172,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Create conversation error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Внутренняя ошибка сервера' },
       { status: 500 }
     )
   }

@@ -8,8 +8,8 @@ import { ThemeProvider } from '@/contexts/ThemeContext'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Real-time Chat Application',
-  description: 'A real-time chat application built with Next.js and Socket.io',
+  title: 'Чат в реальном времени',
+  description: 'Чат-приложение в реальном времени, построенное на Next.js и Socket.io',
 }
 
 // Сохраняем HTTP сервер для Socket.IO
@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ru" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider>
           <AuthProvider>

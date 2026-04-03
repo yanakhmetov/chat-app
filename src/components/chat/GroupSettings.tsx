@@ -74,7 +74,7 @@ export default function GroupSettings({
   }
 
   const removeMember = async (userId: string) => {
-    if (!confirm('Are you sure you want to remove this member?')) return
+    if (!confirm('Вы уверены, что хотите удалить этого участника?')) return
     
     setLoading(true)
     try {
@@ -103,7 +103,7 @@ export default function GroupSettings({
   }
 
   const leaveGroup = async () => {
-    if (!confirm('Are you sure you want to leave this group?')) return
+    if (!confirm('Вы уверены, что хотите покинуть эту группу?')) return
     
     setLoading(true)
     try {
@@ -133,7 +133,7 @@ export default function GroupSettings({
   }
 
   const deleteGroup = async () => {
-    if (!confirm('Are you sure you want to delete this group? This action cannot be undone.')) return
+    if (!confirm('Вы уверены, что хотите удалить эту группу? Это действие нельзя отменить.')) return
     
     setLoading(true)
     try {
@@ -163,7 +163,7 @@ export default function GroupSettings({
   const transferAdmin = async () => {
     if (!selectedNewAdmin) return
     
-    if (!confirm('Are you sure you want to transfer ownership? You will be removed from the group.')) return
+    if (!confirm('Вы уверены, что хотите передать владение? Вы будете удалены из группы.')) return
     
     setLoading(true)
     try {
@@ -203,7 +203,7 @@ export default function GroupSettings({
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
         <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto animate-slide-in shadow-2xl">
           <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 px-6 py-4 flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Group Settings</h2>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Настройки группы</h2>
             <button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
@@ -218,7 +218,7 @@ export default function GroupSettings({
             {/* Group Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Group Name
+                Название группы
               </label>
               {isEditingName && isAdmin ? (
                 <div className="flex gap-2">
@@ -234,7 +234,7 @@ export default function GroupSettings({
                     disabled={loading}
                     className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 text-sm font-medium"
                   >
-                    Save
+                    Сохранить
                   </button>
                   <button
                     onClick={() => {
@@ -243,7 +243,7 @@ export default function GroupSettings({
                     }}
                     className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
-                    Cancel
+                    Отмена
                   </button>
                 </div>
               ) : (
@@ -254,7 +254,7 @@ export default function GroupSettings({
                       onClick={() => setIsEditingName(true)}
                       className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm transition-colors"
                     >
-                      Edit
+                      Редактировать
                     </button>
                   )}
                 </div>
@@ -264,7 +264,7 @@ export default function GroupSettings({
             {/* Members List */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Members ({users.length})
+                Участники ({users.length})
               </label>
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {users.map(user => (
@@ -280,7 +280,7 @@ export default function GroupSettings({
                       <div>
                         <p className="font-medium text-gray-900 dark:text-white">{user.username}</p>
                         {user.id === adminId && (
-                          <span className="text-xs text-blue-600 dark:text-blue-400">Admin</span>
+                          <span className="text-xs text-blue-600 dark:text-blue-400">Админ</span>
                         )}
                       </div>
                     </div>
@@ -290,7 +290,7 @@ export default function GroupSettings({
                         disabled={loading}
                         className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-sm transition-colors disabled:opacity-50"
                       >
-                        Remove
+                        Удалить
                       </button>
                     )}
                   </div>
@@ -308,7 +308,7 @@ export default function GroupSettings({
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                   </svg>
-                  Transfer Ownership
+                  Передать владение
                 </button>
                 <button
                   onClick={deleteGroup}
@@ -318,7 +318,7 @@ export default function GroupSettings({
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
-                  Delete Group
+                  Удалить группу
                 </button>
               </div>
             )}
@@ -333,7 +333,7 @@ export default function GroupSettings({
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
-                Leave Group
+                Покинуть группу
               </button>
             </div>
           </div>
@@ -344,16 +344,16 @@ export default function GroupSettings({
       {showTransferModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4 animate-fade-in">
           <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md p-6 shadow-2xl">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Transfer Ownership</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Передача владения</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Select a new admin. You will be removed from the group after transfer.
+              Выберите нового администратора. Вы будете удалены из группы после передачи.
             </p>
             <select
               value={selectedNewAdmin}
               onChange={(e) => setSelectedNewAdmin(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white mb-4"
             >
-              <option value="">Select a member...</option>
+              <option value="">Выберите участника...</option>
               {users.filter(u => u.id !== adminId).map(user => (
                 <option key={user.id} value={user.id}>{user.username}</option>
               ))}
@@ -363,7 +363,7 @@ export default function GroupSettings({
                 onClick={() => setShowTransferModal(false)}
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Cancel
+                Отмена
               </button>
               <button
                 onClick={transferAdmin}
@@ -376,10 +376,10 @@ export default function GroupSettings({
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Transferring...
+                    Передача...
                   </>
                 ) : (
-                  'Transfer'
+                  'Передать'
                 )}
               </button>
             </div>

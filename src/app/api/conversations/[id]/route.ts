@@ -12,7 +12,7 @@ export async function GET(
     const user = await getSession(token)
     
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
     
     const conversation = await prisma.conversation.findFirst({
@@ -49,14 +49,14 @@ export async function GET(
     })
     
     if (!conversation) {
-      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
+      return NextResponse.json({ error: 'Диалог не найден' }, { status: 404 })
     }
     
     return NextResponse.json(conversation)
   } catch (error) {
     console.error('Get conversation error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Внутренняя ошибка сервера' },
       { status: 500 }
     )
   }
@@ -72,7 +72,7 @@ export async function PATCH(
     const currentUser = await getSession(token)
     
     if (!currentUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
     
     const { name, addUsers, removeUsers, transferAdmin } = await req.json()
@@ -90,13 +90,13 @@ export async function PATCH(
     })
     
     if (!conversation) {
-      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
+      return NextResponse.json({ error: 'Диалог не найден' }, { status: 404 })
     }
     
     // Проверяем, что это групповая беседа
     if (!conversation.isGroup) {
       return NextResponse.json(
-        { error: 'This is not a group conversation' },
+        { error: 'Это не групповой диалог' },
         { status: 400 }
       )
     }
@@ -111,7 +111,7 @@ export async function PATCH(
         // Позволяем пользователю выйти из группы
       } else {
         return NextResponse.json(
-          { error: 'Only group admin can perform this action' },
+          { error: 'Только администратор группы может выполнить это действие' },
           { status: 403 }
         )
       }
@@ -149,7 +149,7 @@ export async function PATCH(
       // Нельзя удалить админа, если он не вышел сам
       if (!isAdmin && usersToRemove.includes(conversation.adminId!)) {
         return NextResponse.json(
-          { error: 'Cannot remove group admin' },
+          { error: 'Нельзя удалить администратора группы' },
           { status: 403 }
         )
       }
@@ -158,7 +158,7 @@ export async function PATCH(
       if (isAdmin && usersToRemove.includes(currentUser.id)) {
         if (!transferAdmin) {
           return NextResponse.json(
-            { error: 'You must transfer admin rights before leaving' },
+            { error: 'Вы должны передать права администратора перед выходом' },
             { status: 400 }
           )
         }
@@ -179,7 +179,7 @@ export async function PATCH(
       
       if (!userExists) {
         return NextResponse.json(
-          { error: 'User is not a member of this group' },
+          { error: 'Пользователь не является участником этой группы' },
           { status: 400 }
         )
       }
@@ -208,14 +208,14 @@ export async function PATCH(
       await prisma.conversation.delete({
         where: { id: params.id }
       })
-      return NextResponse.json({ message: 'Group deleted' })
+      return NextResponse.json({ message: 'Группа удалена' })
     }
     
     return NextResponse.json(updatedConversation)
   } catch (error) {
     console.error('Update conversation error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Внутренняя ошибка сервера' },
       { status: 500 }
     )
   }
@@ -231,7 +231,7 @@ export async function DELETE(
     const user = await getSession(token)
     
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
     
     const conversation = await prisma.conversation.findFirst({
@@ -244,13 +244,13 @@ export async function DELETE(
     })
     
     if (!conversation) {
-      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
+      return NextResponse.json({ error: 'Диалог не найден' }, { status: 404 })
     }
     
     // Только админ может удалить групповой чат
     if (conversation.isGroup && conversation.adminId !== user.id) {
       return NextResponse.json(
-        { error: 'Only group admin can delete this group' },
+        { error: 'Только администратор группы может удалить эту группу' },
         { status: 403 }
       )
     }
@@ -265,11 +265,11 @@ export async function DELETE(
       where: { id: params.id }
     })
     
-    return NextResponse.json({ message: 'Conversation deleted successfully' })
+    return NextResponse.json({ message: 'Диалог успешно удален' })
   } catch (error) {
     console.error('Delete conversation error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Внутренняя ошибка сервера' },
       { status: 500 }
     )
   }

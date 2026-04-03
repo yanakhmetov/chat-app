@@ -32,16 +32,16 @@ export const initSocket = (server: NetServer, res: NextApiResponse) => {
     console.log('Token received:', token ? `${token.substring(0, 20)}...` : 'NO TOKEN')
     
     if (!token) {
-      console.log('No token provided')
-      return next(new Error('Authentication error: No token'))
+      console.log('Токен не предоставлен')
+      return next(new Error('Ошибка аутентификации: Токен не предоставлен'))
     }
     
     const { verifyToken } = await import('./auth')
     const decoded = verifyToken(token)
     
     if (!decoded) {
-      console.log('Invalid token')
-      return next(new Error('Authentication error: Invalid token'))
+      console.log('Неверный токен')
+      return next(new Error('Ошибка аутентификации: Неверный токен'))
     }
     
     console.log('User authenticated:', decoded.userId)
@@ -82,7 +82,7 @@ export const initSocket = (server: NetServer, res: NextApiResponse) => {
       console.log(`✅ User ${userId} fully connected, online users count: ${onlineUsersList.length}`)
     } catch (error) {
       console.error('Error in connection handler:', error)
-      socket.emit('error', { message: 'Failed to initialize connection' })
+      socket.emit('error', { message: 'Не удалось инициализировать соединение' })
     }
     
     socket.on('message:send', async (data) => {

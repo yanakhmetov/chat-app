@@ -11,7 +11,7 @@ export async function GET(
     const user = await getSession(token)
     
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
     
     const { searchParams } = new URL(req.url)
@@ -46,7 +46,7 @@ export async function GET(
   } catch (error) {
     console.error('Get messages error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Внутренняя ошибка сервера' },
       { status: 500 }
     )
   }

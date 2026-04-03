@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     
     if (existingUser) {
       return NextResponse.json(
-        { error: 'User already exists' },
+        { error: 'Пользователь уже существует' },
         { status: 400 }
       )
     }
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Registration error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Внутренняя ошибка сервера' },
       { status: 500 }
     )
   }

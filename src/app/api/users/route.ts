@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     const currentUser = await getSession(token)
     
     if (!currentUser) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Не авторизован' }, { status: 401 })
     }
     
     const { searchParams } = new URL(req.url)
@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error('Get users error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Внутренняя ошибка сервера' },
       { status: 500 }
     )
   }

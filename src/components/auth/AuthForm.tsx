@@ -73,12 +73,12 @@ export default function AuthForm({ type }: AuthFormProps) {
       
       {type === 'register' && (
         <Input
-          label="Username"
+          label="Имя пользователя"
           type="text"
           value={formData.username}
           onChange={(e) => setFormData({ ...formData, username: e.target.value })}
           required
-          placeholder="Choose a username"
+          placeholder="Выберите имя пользователя"
         />
       )}
       
@@ -88,16 +88,16 @@ export default function AuthForm({ type }: AuthFormProps) {
         value={formData.email}
         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
         required
-        placeholder="Enter your email"
+        placeholder="Введите ваш email"
       />
       
       <Input
-        label="Password"
+        label="Пароль"
         type="password"
         value={formData.password}
         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
         required
-        placeholder="Enter your password"
+        placeholder="Введите ваш пароль"
       />
       
       <Button 
@@ -106,7 +106,7 @@ export default function AuthForm({ type }: AuthFormProps) {
         className="w-full mt-6"
         size="lg"
       >
-        {type === 'login' ? 'Sign In' : 'Sign Up'}
+        {type === 'login' ? 'Войти' : 'Зарегистрироваться'}
       </Button>
     </form>
   )

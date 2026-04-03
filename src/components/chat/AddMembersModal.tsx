@@ -116,7 +116,7 @@ export default function AddMembersModal({
       <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto animate-slide-in shadow-2xl">
         <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 px-6 py-4 flex justify-between items-center">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            Add Members to Group
+            Добавить участников в группу
           </h2>
           <button
             onClick={onClose}
@@ -136,14 +136,14 @@ export default function AddMembersModal({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6-4h12m-6-4v2m-6 4h12m-6 4h12" />
                 </svg>
               </div>
-              <p className="text-gray-500 dark:text-gray-400">Only group admin can add members</p>
+              <p className="text-gray-500 dark:text-gray-400">Только администратор группы может добавлять участников</p>
             </div>
           ) : (
             <>
               <div className="flex gap-2">
                 <input
                   type="text"
-                  placeholder="Search users by name or email..."
+                  placeholder="Поиск пользователей по имени или email..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && searchUsers()}
@@ -160,7 +160,7 @@ export default function AddMembersModal({
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                   ) : (
-                    'Search'
+                    'Поиск'
                   )}
                 </button>
               </div>
@@ -215,14 +215,14 @@ export default function AddMembersModal({
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
-                  <p className="text-gray-500 dark:text-gray-400">No users found</p>
+                  <p className="text-gray-500 dark:text-gray-400">Пользователи не найдены</p>
                 </div>
               )}
               
               {selectedUsers.length > 0 && (
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-3">
                   <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                    Selected: {selectedUsers.length} user(s)
+                    Выбрано: {selectedUsers.length} пользователь(ей)
                   </p>
                   <div className="flex flex-wrap gap-1">
                     {selectedUsers.slice(0, 5).map(userId => {
@@ -235,7 +235,7 @@ export default function AddMembersModal({
                     })}
                     {selectedUsers.length > 5 && (
                       <span className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300">
-                        +{selectedUsers.length - 5} more
+                        +{selectedUsers.length - 5} ещё
                       </span>
                     )}
                   </div>
@@ -251,7 +251,7 @@ export default function AddMembersModal({
               onClick={onClose}
               className="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
             >
-              Cancel
+              Отмена
             </button>
             <button
               onClick={handleSubmit}
@@ -264,10 +264,10 @@ export default function AddMembersModal({
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Adding...
+                  Добавление...
                 </>
               ) : (
-                `Add ${selectedUsers.length} Member${selectedUsers.length !== 1 ? 's' : ''}`
+                `Добавить ${selectedUsers.length} участник${selectedUsers.length !== 1 ? 'ов' : ''}`
               )}
             </button>
           </div>

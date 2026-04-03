@@ -66,7 +66,7 @@ export default function MessageList({ messages, currentUserId, typingUsers }: Me
         <div key={date}>
           <div className="flex justify-center mb-4">
             <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded-full">
-              {date === new Date().toDateString() ? 'Today' : date}
+              {date === new Date().toDateString() ? 'Сегодня' : date}
             </span>
           </div>
           
@@ -136,7 +136,7 @@ export default function MessageList({ messages, currentUserId, typingUsers }: Me
                   return message?.sender.username
                 }).join(', ')}
               </span>
-              <span className="text-sm text-gray-600 dark:text-gray-400">is typing</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">печатает</span>
               <div className="flex space-x-1 ml-1">
                                 <div className="w-1.5 h-1.5 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                 <div className="w-1.5 h-1.5 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>

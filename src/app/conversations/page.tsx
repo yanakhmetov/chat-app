@@ -80,10 +80,10 @@ export default function ConversationsPage() {
     return (
       <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
         <Sidebar>
-          <div className="p-4 text-gray-500 dark:text-gray-400">Loading conversations...</div>
+        <div className="p-4 text-gray-500 dark:text-gray-400">Загрузка диалогов...</div>
         </Sidebar>
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-gray-500 dark:text-gray-400">Loading...</div>
+          <div className="text-gray-500 dark:text-gray-400">Загрузка...</div>
         </div>
       </div>
     )
@@ -111,10 +111,10 @@ export default function ConversationsPage() {
             </svg>
           </div>
           <h2 className="text-2xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
-            Welcome to ChatApp
+            Добро пожаловать в ChatApp
           </h2>
           <p className="text-gray-500 dark:text-gray-500">
-            Select a conversation to start chatting
+            Выберите диалог, чтобы начать общение
           </p>
         </div>
       </div>

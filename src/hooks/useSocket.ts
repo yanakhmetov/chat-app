@@ -13,7 +13,7 @@ export const useSocket = () => {
     console.log('Socket hook - token exists:', !!token)
     
     if (!token) {
-      console.log('No token, skipping socket connection')
+      console.log('Токен отсутствует, пропускаю подключение сокета')
       return
     }
 
@@ -58,7 +58,7 @@ export const useSocket = () => {
     })
 
     return () => {
-      console.log('Cleaning up socket')
+      console.log('Очистка сокета')
       socket.disconnect()
     }
   }, [])
@@ -68,7 +68,7 @@ export const useSocket = () => {
       console.log(`📤 Emitting ${event}:`, data)
       socketRef.current.emit(event, data)
     } else {
-      console.warn(`Cannot emit ${event}, socket not connected`)
+      console.warn(`Не могу отправить ${event}, сокет не подключен`)
     }
   }
 

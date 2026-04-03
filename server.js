@@ -244,7 +244,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-pro
 
 // Проверка наличия JWT_SECRET
 if (!process.env.JWT_SECRET) {
-  console.warn('⚠️  JWT_SECRET not set in environment variables. Using default secret. Please set it in production!')
+  console.warn('⚠️  JWT_SECRET не установлен в переменных окружения. Используется секрет по умолчанию. Пожалуйста, установите его в продакшене!')
 }
 
 // Redis functions (упрощенные для теста)
@@ -298,8 +298,8 @@ app.prepare().then(() => {
     console.log('Socket auth - token received:', !!token)
     
     if (!token) {
-      console.log('No token provided')
-      return next(new Error('Authentication error: No token'))
+      console.log('Токен не предоставлен')
+      return next(new Error('Ошибка аутентификации: Токен не предоставлен'))
     }
     
     try {
@@ -309,7 +309,7 @@ app.prepare().then(() => {
       next()
     } catch (error) {
       console.error('Socket auth error:', error.message)
-      next(new Error('Authentication error: ' + error.message))
+      next(new Error('Ошибка аутентификации: ' + error.message))
     }
   })
 
@@ -456,7 +456,7 @@ app.prepare().then(() => {
   const PORT = process.env.PORT || 3000
   
   server.listen(PORT, () => {
-    console.log(`> Ready on http://localhost:${PORT}`)
-    console.log(`> Socket.IO server running on /api/socket`)
+    console.log(`> Сервер готов на http://localhost:${PORT}`)
+    console.log(`> Socket.IO сервер работает на /api/socket`)
   })
 })

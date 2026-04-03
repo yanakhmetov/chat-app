@@ -13,10 +13,10 @@ export default function LoginPage() {
             </svg>
           </div>
           <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-            Welcome back
+            С возвращением
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Sign in to continue to ChatApp
+            Войдите, чтобы продолжить в ChatApp
           </p>
         </div>
         
@@ -28,18 +28,18 @@ export default function LoginPage() {
           </div>
           <div className="relative flex justify-center text-sm">
             <span className="px-2 bg-transparent text-gray-500 dark:text-gray-400">
-              New to ChatApp?
+              Впервые в ChatApp?
             </span>
           </div>
         </div>
         
         <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-          Don't have an account?{' '}
+          Нет аккаунта?{' '}
           <Link 
             href="/register" 
             className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
           >
-            Create one
+            Создать
           </Link>
         </p>
       </div>

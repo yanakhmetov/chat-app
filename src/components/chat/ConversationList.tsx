@@ -96,13 +96,13 @@ export default function ConversationList({
       {/* Search input */}
       <div className="p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="relative">
-          <input
-            type="text"
-            placeholder="Search conversations..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-gray-700 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-          />
+            <input
+              type="text"
+              placeholder="Поиск бесед..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-gray-700 border-0 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+            />
           <svg
             className="absolute left-3 top-3 h-5 w-5 text-gray-400 dark:text-gray-500"
             fill="none"
@@ -128,8 +128,8 @@ export default function ConversationList({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </div>
-            <p className="text-gray-500 dark:text-gray-400 mb-3 text-sm">No conversations yet</p>
-            <p className="text-xs text-gray-400 dark:text-gray-500">Click the button below to start a new chat</p>
+            <p className="text-gray-500 dark:text-gray-400 mb-3 text-sm">Пока нет бесед</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500">Нажмите кнопку ниже, чтобы начать новый чат</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -165,7 +165,7 @@ export default function ConversationList({
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          Start New Chat
+          Начать новый чат
         </button>
       </div>
       
@@ -253,7 +253,7 @@ function NewChatModal({ onClose }: { onClose: () => void }) {
       <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-4xl h-[85vh] max-h-[85vh] overflow-hidden animate-slide-in shadow-2xl flex flex-col">
         {/* Заголовок */}
         <div className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 px-6 py-4 flex justify-between items-center flex-shrink-0">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Start New Chat</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Начать новый чат</h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
@@ -269,8 +269,8 @@ function NewChatModal({ onClose }: { onClose: () => void }) {
           {/* Group Chat Toggle */}
           <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
             <div>
-              <span className="text-base font-medium text-gray-700 dark:text-gray-300">Group Chat</span>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Create a group chat with multiple members</p>
+              <span className="text-base font-medium text-gray-700 dark:text-gray-300">Групповой чат</span>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Создать групповой чат с несколькими участниками</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
@@ -287,11 +287,11 @@ function NewChatModal({ onClose }: { onClose: () => void }) {
           {isGroup && (
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Group Name
+                Название группы
               </label>
               <input
                 type="text"
-                placeholder="Enter group name..."
+                placeholder="Введите название группы..."
                 value={groupName}
                 onChange={(e) => setGroupName(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-base"
@@ -303,11 +303,11 @@ function NewChatModal({ onClose }: { onClose: () => void }) {
           {/* Search Users */}
           <div className="space-y-3">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Search Users
+              Поиск пользователей
             </label>
             <input
               type="text"
-              placeholder="Search by name or email..."
+              placeholder="Поиск по имени или email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && searchUsers()}
@@ -325,10 +325,10 @@ function NewChatModal({ onClose }: { onClose: () => void }) {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Searching...
+                  Поиск...
                 </div>
               ) : (
-                'Search Users'
+              'Найти пользователей'
               )}
             </button>
           </div>
@@ -337,11 +337,11 @@ function NewChatModal({ onClose }: { onClose: () => void }) {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Select Users
+                Выберите пользователей
               </label>
               {selectedUsers.length > 0 && (
                 <span className="text-sm text-blue-600 dark:text-blue-400">
-                  {selectedUsers.length} selected
+                  выбрано: {selectedUsers.length}
                 </span>
               )}
             </div>
@@ -391,7 +391,7 @@ function NewChatModal({ onClose }: { onClose: () => void }) {
                       {user.isOnline && (
                         <div className="flex items-center gap-1 ml-2 flex-shrink-0">
                           <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                          <span className="text-xs text-green-600 dark:text-green-400 hidden sm:inline">Online</span>
+                          <span className="text-xs text-green-600 dark:text-green-400 hidden sm:inline">В сети</span>
                         </div>
                       )}
                     </div>
@@ -404,8 +404,8 @@ function NewChatModal({ onClose }: { onClose: () => void }) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
-                  <p className="text-gray-500 dark:text-gray-400">No users found</p>
-                  <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Try a different search term</p>
+                  <p className="text-gray-500 dark:text-gray-400">Пользователи не найдены</p>
+                  <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Попробуйте другой поисковый запрос</p>
                 </div>
               ) : (
                 <div className="text-center py-12">
@@ -414,8 +414,8 @@ function NewChatModal({ onClose }: { onClose: () => void }) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                   </div>
-                  <p className="text-gray-500 dark:text-gray-400">Search for users to start a chat</p>
-                  <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Enter a name or email above and click Search</p>
+                  <p className="text-gray-500 dark:text-gray-400">Найдите пользователей, чтобы начать чат</p>
+                  <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Введите имя или email выше и нажмите "Найти пользователей"</p>
                 </div>
               )}
             </div>
@@ -428,7 +428,7 @@ function NewChatModal({ onClose }: { onClose: () => void }) {
             onClick={onClose}
             className="px-6 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            Cancel
+            Отмена
           </button>
           <button
             onClick={createConversation}
@@ -441,10 +441,10 @@ function NewChatModal({ onClose }: { onClose: () => void }) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Creating...
+                Создание...
               </>
             ) : (
-              `Create ${isGroup ? 'Group' : 'Chat'}`
+              `${isGroup ? 'Создать группу' : 'Создать чат'}`
             )}
           </button>
         </div>
