@@ -55,61 +55,109 @@ app.prepare().then(() => {
     path: '/api/socket',
     addTrailingSlash: false,
     cors: {
-      origin: ['http://localhost:3000', 'http://localhost:3001'],
+      // Allow the origin that sent the request (important for Docker/Railway)
+      origin: true, 
       credentials: true,
       methods: ['GET', 'POST']
     },
     transports: ['websocket', 'polling']
   })
 
-  // Middleware для аутентификации
+  // Make io globally available
+  global.io = io
+
+  // Auth Middleware
   io.use(async (socket, next) => {
     const token = socket.handshake.auth.token
-    console.log('Socket auth - token received:', !!token)
-    
+
     if (!token) {
-      console.log('No token provided')
-      return next(new Error('Authentication error: No token'))
+      console.log('Socket auth: No token')
+      return next(new Error('Authentication error'))
     }
-    
+
     try {
       const decoded = jwt.verify(token, JWT_SECRET)
       socket.data.userId = decoded.userId
-      console.log('Socket authenticated for user:', decoded.userId)
       next()
     } catch (error) {
       console.error('Socket auth error:', error.message)
-      next(new Error('Authentication error: ' + error.message))
+      next(new Error('Authentication error'))
     }
   })
 
   io.on('connection', async (socket) => {
     const userId = socket.data.userId
-    console.log(`✅ User ${userId} connected, socket ID: ${socket.id}`)
-    
+    console.log(`✅ User connected: ${userId} (Socket: ${socket.id})`)
+
     try {
-      // Store connection
-      storeUserSocket(userId, socket.id)
-      setUserOnline(userId)
-      
-      // Update user status in database
+      socket.join(userId)
+      onlineUsers.add(userId)
+
       await prisma.user.update({
         where: { id: userId },
         data: { status: 'ONLINE', lastSeen: new Date() }
-      })
-      
-      // Broadcast to others
+      }).catch(e => console.warn(`Prisma update online failed: ${e.message}`))
+
       socket.broadcast.emit('user:online', { userId })
-      
-      // Send online users list to new user
-      const onlineUsersList = getOnlineUsers()
-      socket.emit('users:online', { userIds: onlineUsersList })
-      
-      console.log(`Online users: ${onlineUsersList.join(', ')}`)
+      socket.emit('users:online', { userIds: Array.from(onlineUsers) })
     } catch (error) {
-      console.error('Error in connection:', error)
+      console.error('Error in socket connection setup:', error)
     }
-    
+
+    socket.on('messages:mark-as-read', async (data) => {
+      const { conversationId, messageIds } = data
+      if (!messageIds || !Array.isArray(messageIds)) return
+
+      console.log(`Marking ${messageIds.length} messages as read in ${conversationId} for ${userId}`)
+
+      try {
+        const updatedMessages = []
+
+        // Faster updates: collect all updated messages and then notify
+        for (const messageId of messageIds) {
+          const message = await prisma.message.findUnique({
+            where: { id: messageId },
+            select: { readBy: true }
+          })
+
+          if (message && !message.readBy.includes(userId)) {
+            const updated = await prisma.message.update({
+              where: { id: messageId },
+              data: {
+                readBy: {
+                  set: [...message.readBy, userId]
+                }
+              },
+              include: {
+                sender: {
+                  select: { id: true, username: true, avatarUrl: true }
+                }
+              }
+            })
+            updatedMessages.push(updated)
+          }
+        }
+
+        if (updatedMessages.length > 0) {
+          const conversation = await prisma.conversation.findUnique({
+            where: { id: conversationId },
+            include: { users: { select: { id: true } } }
+          })
+
+          if (conversation) {
+            for (const user of conversation.users) {
+              // Notify everyone about EVERY updated message
+              for (const updatedMsg of updatedMessages) {
+                io.to(user.id).emit('message:updated', updatedMsg)
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error marking messages as read:', error)
+      }
+    })
+
     socket.on('message:send', async (data) => {
       const { conversationId, content } = data
       console.log(`Message from ${userId} in ${conversationId}: ${content}`)
