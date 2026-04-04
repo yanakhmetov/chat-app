@@ -8,6 +8,7 @@ README.md
 .env.local
 .env.development
 .env.production
+.env.docker
 .next
 server.js
 dist
