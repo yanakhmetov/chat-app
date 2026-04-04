@@ -15,7 +15,8 @@
     "db:seed": "prisma db seed",
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs -f",
-    "docker:clean": "docker-compose down -v"
+    "docker:clean": "docker-compose down -v",
+    "postinstall": "prisma generate"
   },
    "prisma": {
     "seed": "node prisma/seed.js"
