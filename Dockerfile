@@ -34,5 +34,5 @@ RUN npm prune --production
 # Открываем порт
 EXPOSE 3000
 
-# Запускаем приложение - используем server.js вместо next start
-CMD ["node", "server-docker.js"]
+# Синхронизируем базу данных с нашей схемой и запускаем сервер
+CMD npx prisma db push && node server-docker.js
