@@ -1,4 +1,4 @@
-// src/contexts/ThemeContext.tsx
+
 'use client'
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
@@ -29,7 +29,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     setMounted(true)
     // Проверяем сохраненную тему в localStorage
     const savedTheme = localStorage.getItem('theme') as Theme | null
-    
+
     if (savedTheme) {
       setTheme(savedTheme)
       applyTheme(savedTheme)
@@ -50,7 +50,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
         applyTheme(newTheme)
       }
     }
-    
+
     mediaQuery.addEventListener('change', handleChange)
     return () => mediaQuery.removeEventListener('change', handleChange)
   }, [])
@@ -71,9 +71,9 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     applyTheme(newTheme)
   }
 
-  // Предотвращаем flash неправильной темы
+  // Предотвращаем flash неправильной темы - рендерим children сразу, чтобы не блокировать приложение
   if (!mounted) {
-    return null
+    return <>{children}</>
   }
 
   return (

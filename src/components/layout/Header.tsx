@@ -8,9 +8,10 @@ interface HeaderProps {
   user: any
   onLogout: () => void
   isConnected: boolean
+  onProfileClick?: () => void
 }
 
-export default function Header({ user, onLogout, isConnected }: HeaderProps) {
+export default function Header({ user, onLogout, isConnected, onProfileClick }: HeaderProps) {
   const [showDropdown, setShowDropdown] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const { theme, toggleTheme } = useTheme()
@@ -21,7 +22,7 @@ export default function Header({ user, onLogout, isConnected }: HeaderProps) {
         setShowDropdown(false)
       }
     }
-    
+
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
@@ -29,21 +30,21 @@ export default function Header({ user, onLogout, isConnected }: HeaderProps) {
   return (
     <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
       {/* Верхняя строка с логотипом и кнопкой темы */}
-      <div className="px-4 py-3 flex items-center justify-between">
+      <div className="px-4 pr-16 lg:px-4 py-3 flex items-center">
         <div className="flex items-center space-x-3">
           <div className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             ChatApp
           </div>
-          <div className="relative">
+          <div className="relative flex-shrink-0">
             <div className={`w-2.5 h-2.5 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'} animate-pulse`} />
             <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-green-400 animate-ping opacity-75" />
           </div>
         </div>
-        
-        {/* Theme Toggle Button - справа от логотипа */}
+
+        {/* Theme Toggle Button - теперь слева */}
         <button
           onClick={toggleTheme}
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          className="ml-4 flex-shrink-0 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           aria-label="Toggle theme"
         >
           {theme === 'light' ? (
@@ -57,7 +58,7 @@ export default function Header({ user, onLogout, isConnected }: HeaderProps) {
           )}
         </button>
       </div>
-      
+
       {/* Нижняя строка с учетной записью */}
       <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-700">
         <div className="relative" ref={dropdownRef}>
@@ -103,7 +104,7 @@ export default function Header({ user, onLogout, isConnected }: HeaderProps) {
               />
             </svg>
           </button>
-          
+
           {/* Выпадающее меню - теперь открывается вниз */}
           {showDropdown && (
             <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-2xl shadow-xl py-2 z-50 border border-gray-100 dark:border-gray-700 animate-fade-in">
@@ -111,6 +112,18 @@ export default function Header({ user, onLogout, isConnected }: HeaderProps) {
                 <p className="text-sm font-semibold text-gray-900 dark:text-white">{user?.username}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{user?.email}</p>
               </div>
+              <button
+                onClick={() => {
+                  setShowDropdown(false)
+                  onProfileClick?.()
+                }}
+                className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors flex items-center space-x-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span>Мой профиль</span>
+              </button>
               <button
                 onClick={() => {
                   setShowDropdown(false)

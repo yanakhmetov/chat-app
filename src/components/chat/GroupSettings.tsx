@@ -1,8 +1,10 @@
-// src/components/chat/GroupSettings.tsx
+
 'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import ImageModal from '../ui/ImageModal'
+
 
 interface User {
   id: string
@@ -19,6 +21,7 @@ interface GroupSettingsProps {
   currentUserId: string
   adminId: string
   onGroupUpdated: () => void
+  onUserClick?: (userId: string) => void
 }
 
 export default function GroupSettings({
@@ -29,7 +32,8 @@ export default function GroupSettings({
   users,
   currentUserId,
   adminId,
-  onGroupUpdated
+  onGroupUpdated,
+  onUserClick
 }: GroupSettingsProps) {
   const router = useRouter()
   const [groupName, setGroupName] = useState(conversationName)
@@ -37,6 +41,8 @@ export default function GroupSettings({
   const [loading, setLoading] = useState(false)
   const [showTransferModal, setShowTransferModal] = useState(false)
   const [selectedNewAdmin, setSelectedNewAdmin] = useState('')
+  const [enlargedImage, setEnlargedImage] = useState<{ src: string, alt: string } | null>(null)
+
   
   const isAdmin = currentUserId === adminId
 
@@ -270,15 +276,40 @@ export default function GroupSettings({
                 {users.map(user => (
                   <div key={user.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                     <div className="flex items-center gap-3">
-                      {user.avatarUrl ? (
-                        <img src={user.avatarUrl} alt={user.username} className="w-8 h-8 rounded-full object-cover ring-2 ring-white dark:ring-gray-800" />
-                      ) : (
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-semibold">
-                          {user.username[0].toUpperCase()}
-                        </div>
-                      )}
+                      <div 
+                        className="relative group/member cursor-zoom-in"
+                        onClick={(e) => {
+                          if (user.avatarUrl) {
+                            e.stopPropagation()
+                            setEnlargedImage({ src: user.avatarUrl, alt: user.username })
+                          } else {
+                            onUserClick?.(user.id)
+                          }
+                        }}
+                      >
+                        {user.avatarUrl ? (
+                          <div className="relative">
+                            <img src={user.avatarUrl} alt={user.username} className="w-8 h-8 rounded-full object-cover ring-2 ring-white dark:ring-gray-800 group-hover/member:opacity-80 transition-all" />
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/member:opacity-100 transition-opacity pointer-events-none">
+                              <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                              </svg>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-semibold group-hover/member:opacity-80 transition-opacity">
+                            {user.username[0].toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+
                       <div>
-                        <p className="font-medium text-gray-900 dark:text-white">{user.username}</p>
+                        <p 
+                          className="font-medium text-gray-900 dark:text-white cursor-pointer hover:underline"
+                          onClick={() => onUserClick?.(user.id)}
+                        >
+                          {user.username}
+                        </p>
                         {user.id === adminId && (
                           <span className="text-xs text-blue-600 dark:text-blue-400">Админ</span>
                         )}
@@ -386,6 +417,14 @@ export default function GroupSettings({
           </div>
         </div>
       )}
+      {enlargedImage && (
+        <ImageModal
+          src={enlargedImage.src}
+          alt={enlargedImage.alt}
+          onClose={() => setEnlargedImage(null)}
+        />
+      )}
     </>
+
   )
 }

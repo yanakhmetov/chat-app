@@ -1,8 +1,8 @@
-// src/components/auth/AuthForm.tsx
 'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/hooks/useAuth'
 import Button from '../ui/Button'
 import Input from '../ui/Input'
 
@@ -11,6 +11,7 @@ interface AuthFormProps {
 }
 
 export default function AuthForm({ type }: AuthFormProps) {
+  const { login, register } = useAuth()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -26,38 +27,19 @@ export default function AuthForm({ type }: AuthFormProps) {
     setError('')
 
     try {
-      const endpoint = type === 'login' ? '/api/auth/login' : '/api/auth/register'
-      const body = type === 'login' 
-        ? { email: formData.email, password: formData.password }
-        : { email: formData.email, password: formData.password, username: formData.username }
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Something went wrong')
+      if (type === 'login') {
+        await login(formData.email, formData.password)
+      } else {
+        await register(formData.email, formData.username, formData.password)
       }
-
-      // Сохраняем в localStorage
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('user', JSON.stringify(data.user))
       
-      // Сохраняем токен в cookies для middleware
-      document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}` // 7 дней
-      
-      console.log('Login successful, redirecting...')
-      
-      // Редирект
-      router.push('/conversations')
-      
+      console.log(`${type === 'login' ? 'Login' : 'Registration'} successful`)
+      // Редирект уже есть внутри функций login/register в useAuthLogic, 
+      // но если нет, можно добавить здесь или положиться на useEffect в других местах.
+      // В нашем случае useAuthLogic.ts вызывает router.push('/conversations')
     } catch (err: any) {
-      console.error('Login error:', err)
-      setError(err.message)
+      console.error('Auth error:', err)
+      setError(err.message || 'Ошибка аутентификации')
     } finally {
       setIsLoading(false)
     }

@@ -83,6 +83,31 @@
     }
   }
 
+  @keyframes spring {
+    0% {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+    70% {
+      transform: scale(1.02);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes zoomIn {
+    from {
+      transform: scale(0);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
   .animate-fade-in {
     animation: fadeIn 0.2s ease-out;
   }
@@ -99,6 +124,15 @@
     animation: slideInRight 0.3s ease-out;
   }
 
+  .animate-spring {
+    animation: spring 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .animate-zoom-in {
+    animation: zoomIn 0.3s ease-out;
+  }
+
+
   .animate-bounce {
     animation: bounce 0.6s infinite;
   }
@@ -108,22 +142,14 @@
   }
 }
 
-/* Custom scrollbar styles */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* Global scrollbar hide but keep functionality */
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
-::-webkit-scrollbar-track {
-  @apply bg-gray-100 dark:bg-gray-800;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-gray-400 dark:bg-gray-600 rounded-full;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-500 dark:bg-gray-500;
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
 
 /* Selection styles */

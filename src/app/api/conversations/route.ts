@@ -164,9 +164,21 @@ export async function POST(req: NextRequest) {
             avatarUrl: true,
             status: true,
           }
+        },
+        messages: {
+          take: 1,
+          orderBy: { createdAt: 'desc' }
         }
       }
     })
+    
+    // Оповещаем всех участников через сокеты
+    const io = (global as any).io
+    if (io) {
+      conversation.users.forEach((u: any) => {
+        io.to(u.id).emit('conversation:new', conversation)
+      })
+    }
     
     return NextResponse.json(conversation)
   } catch (error) {

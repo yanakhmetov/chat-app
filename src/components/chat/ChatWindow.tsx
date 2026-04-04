@@ -1,4 +1,4 @@
-// src/components/chat/ChatWindow.tsx
+
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
@@ -11,6 +11,7 @@ interface Message {
   content: string
   senderId: string
   conversationId: string
+  readBy: string[]
   createdAt: string
   sender: {
     id: string
@@ -35,14 +36,17 @@ interface ChatWindowProps {
   groupAdminId?: string
   onMembersChanged?: () => void
   onGroupUpdated?: () => void
+  onUserClick?: (userId: string) => void
 }
 
 export default function ChatWindow({ 
   conversationId, 
   currentUserId, 
   isGroup = false,
+  users = [],
   onMembersChanged,
-  onGroupUpdated
+  onGroupUpdated,
+  onUserClick
 }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -79,16 +83,41 @@ export default function ChatWindow({
       }
     }
 
+    const handleMessageUpdated = (updatedMessage: Message) => {
+      if (updatedMessage.conversationId === conversationId) {
+        setMessages(prev => prev.map(msg => 
+          msg.id === updatedMessage.id ? updatedMessage : msg
+        ))
+      }
+    }
+
     on('message:new', handleNewMessage)
+    on('message:updated', handleMessageUpdated)
     on('typing:start', handleTypingStart)
     on('typing:stop', handleTypingStop)
 
     return () => {
       off('message:new', handleNewMessage)
+      off('message:updated', handleMessageUpdated)
       off('typing:start', handleTypingStart)
       off('typing:stop', handleTypingStop)
     }
   }, [socket, conversationId, currentUserId, on, off])
+
+  useEffect(() => {
+    if (!socket || messages.length === 0) return
+
+    const unreadMessageIds = messages
+      .filter(msg => msg.senderId !== currentUserId && !msg.readBy.includes(currentUserId))
+      .map(msg => msg.id)
+
+    if (unreadMessageIds.length > 0) {
+      emit('messages:mark-as-read', {
+        conversationId,
+        messageIds: unreadMessageIds
+      })
+    }
+  }, [messages, socket, currentUserId, conversationId, emit])
 
   useEffect(() => {
     scrollToBottom()
@@ -143,17 +172,19 @@ export default function ChatWindow({
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-gray-50 dark:bg-gray-900 relative">
       {/* Messages */}
       <div className="flex-1 overflow-y-auto">
         <MessageList
           messages={messages}
           currentUserId={currentUserId}
           typingUsers={typingUsers}
+          isGroup={isGroup}
+          onUserClick={onUserClick}
         />
         <div ref={messagesEndRef} />
       </div>
-      
+
       {/* Message Input */}
       <MessageInput onSendMessage={sendMessage} onTyping={handleTyping} />
     </div>

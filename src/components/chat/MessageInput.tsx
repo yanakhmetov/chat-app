@@ -1,4 +1,4 @@
-// src/components/chat/MessageInput.tsx (альтернативная версия со счетчиком внутри поля)
+
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
@@ -14,8 +14,8 @@ export default function MessageInput({ onSendMessage, onTyping }: MessageInputPr
   const [isTyping, setIsTyping] = useState(false)
   const typingTimeoutRef = useRef<NodeJS.Timeout>()
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = (e?: React.FormEvent | React.KeyboardEvent) => {
+    if (e) e.preventDefault()
     if (message.trim()) {
       onSendMessage(message)
       setMessage('')
@@ -61,8 +61,8 @@ export default function MessageInput({ onSendMessage, onTyping }: MessageInputPr
   }, [])
 
   return (
-    <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800" >
-      <form onSubmit={handleSubmit} className="p-4">
+    <div className="h-[79px] border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center" >
+      <form onSubmit={(e) => handleSubmit(e)} className="p-4 w-full">
         <div className="flex gap-2 items-end">
           <div className="flex-1 relative">
             <input

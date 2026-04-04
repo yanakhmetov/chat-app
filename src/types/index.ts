@@ -1,4 +1,4 @@
-// src/types/index.ts
+
 
 export interface User {
   id: string
@@ -16,6 +16,7 @@ export interface Message {
   senderId: string
   conversationId: string
   readBy: string[]
+  isSystem?: boolean
   createdAt: string | Date
   updatedAt?: string | Date
   sender?: {

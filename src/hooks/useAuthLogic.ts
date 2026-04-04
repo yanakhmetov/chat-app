@@ -45,6 +45,10 @@ export function useAuthLogic() {
 
       localStorage.setItem('token', data.token)
       localStorage.setItem('user', JSON.stringify(data.user))
+      
+      // Сохраняем токен в cookies для middleware
+      document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}`
+      
       setUser(data.user)
       router.push('/conversations')
     } catch (error) {
@@ -68,6 +72,10 @@ export function useAuthLogic() {
 
       localStorage.setItem('token', data.token)
       localStorage.setItem('user', JSON.stringify(data.user))
+      
+      // Сохраняем токен в cookies для middleware
+      document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}`
+      
       setUser(data.user)
       router.push('/conversations')
     } catch (error) {

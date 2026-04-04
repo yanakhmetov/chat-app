@@ -5,12 +5,13 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Sidebar from '@/components/layout/Sidebar'
 import Header from '@/components/layout/Header'
-import ConversationList from '@/components/chat/ConversationList'
+import ConversationList, { NewChatModal } from '@/components/chat/ConversationList'
 import ChatWindow from '@/components/chat/ChatWindow'
 import { useSocket } from '@/hooks/useSocket'
 import type { Conversation, AuthUser, Message } from '@/types'
 import AddMembersModal from '@/components/chat/AddMembersModal'
 import GroupSettings from '@/components/chat/GroupSettings'
+import UserProfileModal from '@/components/profile/UserProfileModal'
 
 export default function ConversationPage() {
   const params = useParams()
@@ -22,69 +23,72 @@ export default function ConversationPage() {
   const [loading, setLoading] = useState(true)
   const [showAddMembers, setShowAddMembers] = useState(false)
   const [showGroupSettings, setShowGroupSettings] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const { socket, isConnected } = useSocket()
+  const [showNewChatModal, setShowNewChatModal] = useState(false)
+  const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
     const userData = localStorage.getItem('user')
-    
+
     if (!token) {
       router.push('/login')
       return
     }
-    
+
     if (userData) {
       setUser(JSON.parse(userData))
     }
-    
+
     fetchConversations()
     fetchCurrentConversation()
   }, [conversationId])
 
   useEffect(() => {
     if (!socket) return
-    
+
     const handleNewMessage = (message: Message) => {
       fetchConversations()
       if (message.conversationId === conversationId) {
         fetchCurrentConversation()
       }
     }
-    
+
     const handleUserOnline = ({ userId }: { userId: string }) => {
       setCurrentConversation((prev: any) => {
         if (!prev) return prev
-        const updatedUsers = prev.users.map((user: any) => 
+        const updatedUsers = prev.users.map((user: any) =>
           user.id === userId ? { ...user, status: 'ONLINE', isOnline: true } : user
         )
         return { ...prev, users: updatedUsers }
       })
-      
+
       setConversations(prev => prev.map(conv => ({
         ...conv,
-        users: conv.users.map(u => 
+        users: conv.users.map(u =>
           u.id === userId ? { ...u, status: 'ONLINE', isOnline: true } : u
         )
       })))
     }
-    
+
     const handleUserOffline = ({ userId }: { userId: string }) => {
       setCurrentConversation((prev: any) => {
         if (!prev) return prev
-        const updatedUsers = prev.users.map((user: any) => 
+        const updatedUsers = prev.users.map((user: any) =>
           user.id === userId ? { ...user, status: 'OFFLINE', isOnline: false } : user
         )
         return { ...prev, users: updatedUsers }
       })
-      
+
       setConversations(prev => prev.map(conv => ({
         ...conv,
-        users: conv.users.map(u => 
+        users: conv.users.map(u =>
           u.id === userId ? { ...u, status: 'OFFLINE', isOnline: false } : u
         )
       })))
     }
-    
+
     const handleUsersOnline = ({ userIds }: { userIds: string[] }) => {
       setCurrentConversation((prev: any) => {
         if (!prev) return prev
@@ -95,7 +99,7 @@ export default function ConversationPage() {
         }))
         return { ...prev, users: updatedUsers }
       })
-      
+
       setConversations(prev => prev.map(conv => ({
         ...conv,
         users: conv.users.map(u => ({
@@ -105,14 +109,45 @@ export default function ConversationPage() {
         }))
       })))
     }
-    
+
+    const handleConversationUpdated = (updatedConv: Conversation) => {
+      if (updatedConv.id === conversationId) {
+        setCurrentConversation(updatedConv)
+      }
+      setConversations(prev => prev.map(c => 
+        c.id === updatedConv.id ? { ...updatedConv, messages: c.messages } : c
+      ))
+    }
+
+    const handleConversationRemoved = ({ conversationId: removedId }: { conversationId: string }) => {
+      if (removedId === conversationId) {
+        router.push('/conversations')
+      }
+      setConversations(prev => prev.filter(c => c.id !== removedId))
+    }
+    const handleConversationNew = (newConv: Conversation) => {
+      setConversations(prev => {
+        if (prev.some(c => c.id === newConv.id)) return prev
+        return [newConv, ...prev]
+      })
+    }
+
     socket.on('message:new', handleNewMessage)
+    socket.on('conversation:new', handleConversationNew)
+    socket.on('conversation:updated', handleConversationUpdated)
+    socket.on('conversation:removed', handleConversationRemoved)
     socket.on('user:online', handleUserOnline)
     socket.on('user:offline', handleUserOffline)
     socket.on('users:online', handleUsersOnline)
     
+    // Запрашиваем актуальные статусы пользователей при монтировании компонента чата
+    socket.emit('request:users_online')
+    
     return () => {
       socket.off('message:new', handleNewMessage)
+      socket.off('conversation:new', handleConversationNew)
+      socket.off('conversation:updated', handleConversationUpdated)
+      socket.off('conversation:removed', handleConversationRemoved)
       socket.off('user:online', handleUserOnline)
       socket.off('user:offline', handleUserOffline)
       socket.off('users:online', handleUsersOnline)
@@ -127,9 +162,9 @@ export default function ConversationPage() {
           'Authorization': `Bearer ${token}`
         }
       })
-      
+
       const data = await response.json()
-      
+
       const formattedConversations: Conversation[] = data.map((conv: any) => ({
         id: conv.id,
         name: conv.name,
@@ -141,7 +176,7 @@ export default function ConversationPage() {
         messages: conv.messages || [],
         lastMessage: conv.messages?.[0]
       }))
-      
+
       setConversations(formattedConversations)
     } catch (error) {
       console.error('Error fetching conversations:', error)
@@ -156,13 +191,13 @@ export default function ConversationPage() {
           'Authorization': `Bearer ${token}`
         }
       })
-      
+
       if (!response.ok) {
         throw new Error('Conversation not found')
       }
-      
+
       const data = await response.json()
-      
+
       const formattedConversation: Conversation = {
         id: data.id,
         name: data.name,
@@ -174,7 +209,7 @@ export default function ConversationPage() {
         messages: data.messages || [],
         lastMessage: data.messages?.[0]
       }
-      
+
       setCurrentConversation(formattedConversation)
     } catch (error) {
       console.error('Error fetching conversation:', error)
@@ -188,11 +223,24 @@ export default function ConversationPage() {
     router.push(`/conversations/${id}`)
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
-    router.push('/login')
+  const handleLogout = async () => {
+    try {
+      if (socket) {
+        socket.disconnect()
+      }
+      
+      await fetch('/api/auth/logout', { method: 'POST' })
+      
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+      router.push('/login')
+    } catch (error) {
+      console.error('Logout error:', error)
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      router.push('/login')
+    }
   }
 
   const handleMembersChanged = () => {
@@ -208,18 +256,18 @@ export default function ConversationPage() {
 
   const getConversationName = () => {
     if (!currentConversation || !user) return 'Чат'
-    
+
     if (currentConversation.isGroup) {
       return currentConversation.name || 'Групповой чат'
     }
-    
+
     const otherUser = currentConversation.users.find(u => u.id !== user.id)
     return otherUser?.username || 'Неизвестный пользователь'
   }
 
   const getOtherUserStatus = () => {
     if (!currentConversation || !user || currentConversation.isGroup) return null
-    
+
     const otherUser = currentConversation.users.find(u => u.id !== user.id)
     const isOnline = otherUser?.status === 'ONLINE' || otherUser?.isOnline
     return isOnline ? 'В сети' : 'Не в сети'
@@ -246,26 +294,48 @@ export default function ConversationPage() {
   return (
     <>
       <div className="h-screen flex bg-gray-50 dark:bg-gray-900 overflow-hidden">
-        <Sidebar>
-          <Header 
+        <Sidebar 
+          isOpen={isSidebarOpen} 
+          onClose={() => {
+            setIsSidebarOpen(false)
+            setShowNewChatModal(false)
+          }} 
+          hideToggle={showNewChatModal}
+        >
+          <Header
             user={user}
             onLogout={handleLogout}
             isConnected={isConnected}
+            onProfileClick={() => {
+              if (user) setSelectedProfileId(user.id)
+            }}
           />
           <ConversationList
             conversations={conversations}
             onSelectConversation={handleSelectConversation}
             currentUserId={user?.id || ''}
             selectedId={conversationId}
+            onOpenNewChat={() => setShowNewChatModal(true)}
           />
+          {showNewChatModal && (
+            <NewChatModal onClose={() => setShowNewChatModal(false)} />
+          )}
         </Sidebar>
-        
+
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Header with chat info and group actions */}
-          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex-shrink-0">
+          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 pl-16 pr-6 lg:px-6 py-4 flex-shrink-0">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <h2 
+                  onClick={() => {
+                    if (!currentConversation?.isGroup) {
+                      const otherUser = currentConversation?.users.find(u => u.id !== user?.id)
+                      if (otherUser) setSelectedProfileId(otherUser.id)
+                    }
+                  }}
+                  className={`text-xl font-semibold text-gray-900 dark:text-white ${!currentConversation?.isGroup ? 'cursor-pointer hover:underline' : ''}`}
+                >
                   {getConversationName()}
                 </h2>
                 {!currentConversation?.isGroup && (
@@ -284,41 +354,47 @@ export default function ConversationPage() {
                   </p>
                 )}
               </div>
-              
-              {/* Group action buttons */}
-              {currentConversation?.isGroup && (
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setShowAddMembers(true)}
-                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                    title="Добавить участников"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    <span className="hidden sm:inline">Добавить участников</span>
-                  </button>
-                  <button
-                    onClick={() => setShowGroupSettings(true)}
-                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                    title="Настройки группы"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span className="hidden sm:inline">Настройки</span>
-                  </button>
-                </div>
-              )}
-              
-              {/* Non-group chat doesn't have action buttons */}
-              {!currentConversation?.isGroup && (
-                <div className="w-20"></div> // Spacer for alignment
-              )}
+
+              {/* Action buttons and Close button */}
+              <div className="flex items-center gap-2">
+                {currentConversation?.isGroup && (
+                  <>
+                    <button
+                      onClick={() => setShowAddMembers(true)}
+                      className="flex items-center gap-2 px-3 py-1.5 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                      title="Добавить участников"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                      <span className="hidden sm:inline">Добавить участников</span>
+                    </button>
+                    <button
+                      onClick={() => setShowGroupSettings(true)}
+                      className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                      title="Настройки группы"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span className="hidden sm:inline">Настройки</span>
+                    </button>
+                  </>
+                )}
+                
+                <button
+                  onClick={() => router.push('/conversations?sidebar=open')}
+                  className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
-          
+
           <ChatWindow
             conversationId={conversationId}
             currentUserId={user?.id || ''}
@@ -329,10 +405,11 @@ export default function ConversationPage() {
             groupAdminId={currentConversation?.adminId || ''}
             onMembersChanged={handleMembersChanged}
             onGroupUpdated={handleGroupUpdated}
+            onUserClick={setSelectedProfileId}
           />
         </div>
       </div>
-      
+
       {/* Modals */}
       <AddMembersModal
         isOpen={showAddMembers}
@@ -342,7 +419,7 @@ export default function ConversationPage() {
         isAdmin={isAdmin}
         onMembersAdded={handleMembersChanged}
       />
-      
+
       <GroupSettings
         isOpen={showGroupSettings}
         onClose={() => setShowGroupSettings(false)}
@@ -352,7 +429,24 @@ export default function ConversationPage() {
         currentUserId={user?.id || ''}
         adminId={currentConversation?.adminId || ''}
         onGroupUpdated={handleGroupUpdated}
+        onUserClick={setSelectedProfileId}
       />
+
+      {selectedProfileId && (
+        <UserProfileModal
+          userId={selectedProfileId}
+          currentUserId={user?.id || ''}
+          onClose={() => setSelectedProfileId(null)}
+          onProfileUpdated={(updatedUser) => {
+            // Optional: Handle local state update if it's the current user
+            if (updatedUser.id === user?.id) {
+              const merged = { ...user, ...updatedUser };
+              setUser(merged as AuthUser);
+              localStorage.setItem('user', JSON.stringify(merged));
+            }
+          }}
+        />
+      )}
     </>
   )
 }

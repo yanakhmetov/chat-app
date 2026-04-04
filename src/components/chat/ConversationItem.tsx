@@ -1,4 +1,4 @@
-// src/components/chat/ConversationItem.tsx
+
 'use client'
 
 import { formatDistanceToNow } from 'date-fns'

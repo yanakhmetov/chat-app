@@ -118,10 +118,12 @@ export async function PATCH(
     }
     
     const updateData: any = {}
+    const systemMessagesData: string[] = [] // Храним тексты системных сообщений
     
     // Переименование группы (только для админа)
-    if (name && conversation.isGroup && isAdmin) {
+    if (name && conversation.isGroup && isAdmin && name !== conversation.name) {
       updateData.name = name
+      systemMessagesData.push(`Группа переименована в "${name}"`)
     }
     
     // Добавление пользователей (только для админа)
@@ -134,6 +136,15 @@ export async function PATCH(
         updateData.users = {
           connect: newUsers.map((id: string) => ({ id }))
         }
+        
+        // Получаем имена добавленных пользователей для системного сообщения
+        const addedUsersInfo = await prisma.user.findMany({
+          where: { id: { in: newUsers } },
+          select: { username: true }
+        })
+        addedUsersInfo.forEach(u => {
+          systemMessagesData.push(`${u.username} добавлен(а) в группу`)
+        })
       }
     }
     
@@ -169,6 +180,19 @@ export async function PATCH(
           ...updateData.users,
           disconnect: usersToRemove.map((id: string) => ({ id }))
         }
+        
+        // Формируем системные сообщения об удалении
+        const removedUsersInfo = await prisma.user.findMany({
+          where: { id: { in: usersToRemove } },
+          select: { id: true, username: true }
+        })
+        removedUsersInfo.forEach(u => {
+          if (u.id === currentUser.id) {
+            systemMessagesData.push(`${u.username} покинул(а) группу`)
+          } else {
+            systemMessagesData.push(`${u.username} удален(а) из группы`)
+          }
+        })
       }
     }
     
@@ -199,15 +223,68 @@ export async function PATCH(
             avatarUrl: true,
             status: true,
           }
+        },
+        messages: {
+          take: 1,
+          orderBy: { createdAt: 'desc' },
+          include: {
+            sender: {
+              select: {
+                id: true,
+                username: true,
+                avatarUrl: true,
+              }
+            }
+          }
         }
       }
     })
+    
+    // Оповещаем участников через сокеты
+    const io = (global as any).io
+    if (io) {
+      // Создаем и рассылаем системные сообщения
+      for (const msgContent of systemMessagesData) {
+        const sysMsg = await prisma.message.create({
+          data: {
+            content: msgContent,
+            senderId: currentUser.id,
+            conversationId: params.id,
+            isSystem: true
+          },
+          include: {
+            sender: {
+              select: { id: true, username: true, avatarUrl: true }
+            }
+          }
+        })
+        
+        // Рассылаем всем текущим участникам
+        updatedConversation.users.forEach((u: any) => {
+          io.to(u.id).emit('message:new', sysMsg)
+        })
+      }
+
+      // Оповещаем оставшихся участников об обновлении (например, переименовании)
+      updatedConversation.users.forEach((u: any) => {
+        io.to(u.id).emit('conversation:updated', updatedConversation)
+      })
+
+      // Оповещаем удаленных участников, что они больше не в группе
+      if (removeUsers && removeUsers.length > 0) {
+        removeUsers.forEach((userId: string) => {
+          io.to(userId).emit('conversation:removed', { conversationId: params.id })
+        })
+      }
+    }
     
     // Если админ вышел и передал права, или группа осталась без участников
     if (updatedConversation.users.length === 0) {
       await prisma.conversation.delete({
         where: { id: params.id }
       })
+      
+      // Оповещаем всех (уже сделано выше или через DELETE если бы использовали его)
       return NextResponse.json({ message: 'Группа удалена' })
     }
     
@@ -255,6 +332,12 @@ export async function DELETE(
       )
     }
     
+    // Получаем список участников перед удалением, чтобы оповестить их
+    const conversationParticipants = await prisma.conversation.findUnique({
+      where: { id: params.id },
+      include: { users: { select: { id: true } } }
+    })
+
     // Delete all messages first
     await prisma.message.deleteMany({
       where: { conversationId: params.id }
@@ -264,6 +347,14 @@ export async function DELETE(
     await prisma.conversation.delete({
       where: { id: params.id }
     })
+    
+    // Оповещаем всех участников об удалении
+    const io = (global as any).io
+    if (io && conversationParticipants) {
+      conversationParticipants.users.forEach(u => {
+        io.to(u.id).emit('conversation:removed', { conversationId: params.id })
+      })
+    }
     
     return NextResponse.json({ message: 'Диалог успешно удален' })
   } catch (error) {

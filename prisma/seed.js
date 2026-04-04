@@ -11,7 +11,7 @@ async function hashPassword(password) {
 async function main() {
   console.log('Начало заполнения базы данных...')
 
-  const hashedPassword = await hashPassword(' ')
+  const hashedPassword = await hashPassword('password123')
 
   // Создаём 6 пользователей с русскими именами и фамилиями
   const users = await Promise.all([
@@ -20,8 +20,11 @@ async function main() {
         email: 'alexey.sokolov@example.com',
         username: 'Алексей Соколов',
         password: hashedPassword,
-        avatarUrl: null,
-        status: 'ONLINE',
+        avatarUrl: 'https://vibirai.ru/image/964470.jpg',
+        dateOfBirth: '1990-05-15',
+        hobbies: 'Программирование, Чтение, Бег',
+        education: 'МГТУ им. Н.Э. Баумана, Информатика и системы управления',
+        status: 'OFFLINE',
         lastSeen: new Date(),
       }
     }),
@@ -30,8 +33,11 @@ async function main() {
         email: 'ekaterina.ivanova@example.com',
         username: 'Екатерина Иванова',
         password: hashedPassword,
-        avatarUrl: null,
-        status: 'ONLINE',
+        avatarUrl: 'https://i.pravatar.cc/150?u=ekaterina',
+        dateOfBirth: '1995-08-22',
+        hobbies: 'Дизайн, Йога, Путешествия',
+        education: 'ВШЭ, Дизайн мультимедиа',
+        status: 'OFFLINE',
         lastSeen: new Date(),
       }
     }),
@@ -40,8 +46,11 @@ async function main() {
         email: 'mikhail.petrov@example.com',
         username: 'Михаил Петров',
         password: hashedPassword,
-        avatarUrl: null,
-        status: 'ONLINE',
+        avatarUrl: 'https://i.pravatar.cc/150?u=mikhail',
+        dateOfBirth: '1988-11-03',
+        hobbies: 'Футбол, Фотография, Гитара',
+        education: 'МГУ, Экономический факультет',
+        status: 'OFFLINE',
         lastSeen: new Date(),
       }
     }),
@@ -50,7 +59,10 @@ async function main() {
         email: 'sofia.kuznetsova@example.com',
         username: 'София Кузнецова',
         password: hashedPassword,
-        avatarUrl: null,
+        avatarUrl: 'https://i.pravatar.cc/150?u=sofia',
+        dateOfBirth: '1992-03-12',
+        hobbies: 'Живопись, Садоводство, Кулинария',
+        education: 'СПбГУ, Филологический факультет',
         status: 'OFFLINE',
         lastSeen: new Date(Date.now() - 3600000),
       }
@@ -60,7 +72,10 @@ async function main() {
         email: 'dmitry.smirnov@example.com',
         username: 'Дмитрий Смирнов',
         password: hashedPassword,
-        avatarUrl: null,
+        avatarUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqD02BHkskeRJKm5wGzLhhOKZetGd_uLnMTA&s',
+        dateOfBirth: '1985-07-28',
+        hobbies: 'Велосипед, Шахматы, История',
+        education: 'МФТИ, Прикладная математика и физика',
         status: 'OFFLINE',
         lastSeen: new Date(Date.now() - 7200000),
       }
@@ -70,8 +85,11 @@ async function main() {
         email: 'anna.vasilyeva@example.com',
         username: 'Анна Васильева',
         password: hashedPassword,
-        avatarUrl: null,
-        status: 'AWAY',
+        avatarUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsYEUZNM6yMtWxXNlYu2HXPFZspwXum2YWhA&s',
+        dateOfBirth: '1998-12-05',
+        hobbies: 'Танцы, Кино, Изучение языков',
+        education: 'МГЛУ, Лингвистика',
+        status: 'OFFLINE',
         lastSeen: new Date(Date.now() - 1800000),
       }
     })
@@ -103,7 +121,7 @@ async function main() {
 
   // Создаём приватные чаты
   const privateChats = []
-  
+
   // Алексей и Екатерина
   const chat1 = await prisma.conversation.create({
     data: {
@@ -119,7 +137,7 @@ async function main() {
   })
   privateChats.push({ id: chat1.id, user1: users[0], user2: users[1] })
   console.log(`Создан приватный чат между ${users[0].username} и ${users[1].username}`)
-  
+
   // Алексей и Михаил
   const chat2 = await prisma.conversation.create({
     data: {
@@ -135,7 +153,7 @@ async function main() {
   })
   privateChats.push({ id: chat2.id, user1: users[0], user2: users[2] })
   console.log(`Создан приватный чат между ${users[0].username} и ${users[2].username}`)
-  
+
   // Екатерина и Михаил
   const chat3 = await prisma.conversation.create({
     data: {
@@ -183,7 +201,10 @@ async function main() {
 
   for (const message of groupMessages) {
     await prisma.message.create({
-      data: message
+      data: {
+        ...message,
+        readBy: [message.senderId]
+      }
     })
   }
   console.log(`\nСоздано ${groupMessages.length} сообщений в групповом чате`)
@@ -214,7 +235,10 @@ async function main() {
 
   for (const message of privateMessages) {
     await prisma.message.create({
-      data: message
+      data: {
+        ...message,
+        readBy: [message.senderId]
+      }
     })
   }
   console.log(`Создано ${privateMessages.length} сообщений в приватных чатах`)
