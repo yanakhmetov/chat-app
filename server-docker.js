@@ -168,14 +168,11 @@ app.prepare().then(() => {
             content,
             senderId: userId,
             conversationId,
+            readBy: [userId],
           },
           include: {
             sender: {
-              select: {
-                id: true,
-                username: true,
-                avatarUrl: true,
-              }
+              select: { id: true, username: true, avatarUrl: true }
             }
           }
         })
@@ -186,11 +183,15 @@ app.prepare().then(() => {
         })
         
         if (conversation) {
+          // Update conversation's updatedAt so it bubbles to top
+          await prisma.conversation.update({
+            where: { id: conversationId },
+            data: { updatedAt: new Date() }
+          }).catch(() => {})
+
           for (const user of conversation.users) {
-            const userSocketId = getUserSocket(user.id)
-            if (userSocketId) {
-              io.to(userSocketId).emit('message:new', message)
-            }
+            // Send to user's room (includes all their open tabs)
+            io.to(user.id).emit('message:new', message)
           }
         }
       } catch (error) {
@@ -210,13 +211,10 @@ app.prepare().then(() => {
         if (conversation) {
           for (const user of conversation.users) {
             if (user.id !== userId) {
-              const userSocketId = getUserSocket(user.id)
-              if (userSocketId) {
-                io.to(userSocketId).emit('typing:start', {
-                  conversationId,
-                  userId,
-                })
-              }
+              io.to(user.id).emit('typing:start', {
+                conversationId,
+                userId,
+              })
             }
           }
         }
@@ -237,13 +235,10 @@ app.prepare().then(() => {
         if (conversation) {
           for (const user of conversation.users) {
             if (user.id !== userId) {
-              const userSocketId = getUserSocket(user.id)
-              if (userSocketId) {
-                io.to(userSocketId).emit('typing:stop', {
-                  conversationId,
-                  userId
-                })
-              }
+              io.to(user.id).emit('typing:stop', {
+                conversationId,
+                userId
+              })
             }
           }
         }
