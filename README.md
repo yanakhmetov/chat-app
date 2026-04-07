@@ -7,6 +7,7 @@
 [![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)](https://reactjs.org/)
 [![Socket.io](https://img.shields.io/badge/Socket.io-Real--Time-010101?style=for-the-badge&logo=socket.io)](https://socket.io/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![Redis](https://img.shields.io/badge/Redis-Scaling-DC382D?style=for-the-badge&logo=redis)](https://redis.io/)
 [![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma)](https://www.prisma.io/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker)](https://www.docker.com/)
@@ -39,7 +40,7 @@
 ### Frontend & Core
 - **Framework**: [Next.js 14](https://nextjs.org/)
 - **Library**: [React 18](https://react.dev/)
-- **Styling**: [Tailwind CSS 3](https://tailwindcss.com/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **Real-time**: [Socket.io-client](https://socket.io/)
 - **State Management**: React Hooks & Context API
 
