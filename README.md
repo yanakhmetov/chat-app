@@ -1,115 +1,137 @@
-# 💬 Real-time Chat Application
+# 💬 ChatApp — Real-Time Premium Messaging
 
-![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![Socket.io](https://img.shields.io/badge/Socket.io-4.5-black?style=for-the-badge&logo=socket.io)
-![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?style=for-the-badge&logo=prisma)
-![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![ChatApp Banner](./public/readme-banner.png)
 
-Современное веб-приложение для обмена сообщениями в реальном времени, построенное на базе Next.js и Socket.IO. Проект ориентирован на высокую производительность, отзывчивый интерфейс и надежную доставку сообщений.
+<div align="center">
+
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)](https://reactjs.org/)
+[![Socket.io](https://img.shields.io/badge/Socket.io-Real--Time-010101?style=for-the-badge&logo=socket.io)](https://socket.io/)
+[![Redis](https://img.shields.io/badge/Redis-Scaling-DC382D?style=for-the-badge&logo=redis)](https://redis.io/)
+[![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma)](https://www.prisma.io/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker)](https://www.docker.com/)
 
 ---
 
-## ✨ Основные возможности
+**ChatApp** — это мощная платформа для мгновенного обмена сообщениями, объединяющая скорость Socket.io и надежность PostgreSQL. Современный интерфейс, групповые чаты и статус пользователей в реальном времени обеспечивают премиальный пользовательский опыт.
 
-*   **🚀 Реальное время:** Мгновенная доставка сообщений через WebSockets (Socket.IO).
-*   **👥 Групповые и приватные чаты:** Создание групп с администрированием или общение тет-а-тет.
-*   **🟢 Статусы пользователей:** Отслеживание онлайн-статуса и времени последнего посещения.
-*   **⌨️ Индикатор набора текста:** Визуальное отображение, когда собеседник пишет сообщение.
-*   **✔️ Статус прочтения:** Индикация того, что сообщение было прочитано участниками.
-*   **🔍 Умный поиск:** Поиск по пользователям и существующим диалогам.
-*   **🌓 Темная тема:** Современный дизайн с поддержкой светлой и темной тем.
-*   **📱 Адаптивность:** Полностью отзывчивый интерфейс, оптимизированный для мобильных устройств.
-*   **👤 Профили пользователей:** Редактирование информации о себе (аватар, хобби, образование).
+[Возможности](#✨-возможности) • [Установка](#🚀-быстрый-старт) • [Стек](#🛠-технологический-стек) • [Docker](#🐳-запуск-через-docker)
+
+</div>
+
+---
+
+## ✨ Возможности
+
+- ⚡ **Real-time Messaging**: Мгновенная доставка сообщений без перезагрузки страниц благодаря **Socket.io**.
+- 👥 **Групповые и Личные Чаты**: Создание приватных бесед и многопользовательских групп с назначением админов.
+- 🟢 **Статусы Пользователей**: Отслеживание Online / Offline / Away статусов в реальном времени.
+- 📖 **Квитанции о Прочтении**: Система отслеживания прочтения сообщений участниками беседы.
+- 🚀 **Масштабируемость с Redis**: Готовность к высоким нагрузкам благодаря интеграции Redis для синхронизации сокетов.
+- 🔐 **Безопасная Аутентификация**: Защита данных с использованием JWT (JSON Web Tokens) и хеширования паролей через bcrypt.
+- 👤 **Профили Пользователей**: Возможность настройки аватаров и детальной информации о себе.
+- 🐳 **Full Stack Docker**: Полноценное окружение с приложением, базой данных PostgreSQL и кэшем Redis.
 
 ---
 
 ## 🛠 Технологический стек
 
-### Frontend
-- **Framework:** Next.js 14 (App Router)
-- **Styling:** Tailwind CSS
-- **State Management:** React Hooks / Context API
-- **Icons:** React Icons
+### Frontend & Core
+- **Framework**: [Next.js 14](https://nextjs.org/)
+- **Library**: [React 18](https://react.dev/)
+- **Styling**: [Tailwind CSS 3](https://tailwindcss.com/)
+- **Real-time**: [Socket.io-client](https://socket.io/)
+- **State Management**: React Hooks & Context API
 
-### Backend
-- **Server:** Node.js (Custom Express/HTTP server for Socket.io integration)
-- **Real-time:** Socket.IO
-- **Database:** PostgreSQL
-- **ORM:** Prisma
-- **Caching:** Redis (для масштабируемости Socket.io)
-- **Auth:** JWT (JSON Web Tokens) + BcryptJS
-
----
-
-## 🚀 Быстрый запуск (Docker)
-
-Это самый простой способ запустить проект со всеми зависимостями (БД, Redis).
-
-1.  **Клонируйте репозиторий:**
-    ```bash
-    git clone https://github.com/yanakhmetov/chat-app.git
-    cd chat-app
-    ```
-
-2.  **Запустите проект с помощью PowerShell скриптов:**
-    - Для первого запуска (сборка и инициализация):
-      ```powershell
-      .\rebuild.ps1
-      ```
-    - Для последующих запусков:
-      ```powershell
-      .\start.ps1
-      ```
-    - Для остановки:
-      ```powershell
-      .\stop.ps1
-      ```
-
-> [!IMPORTANT]
-> Если PowerShell блокирует запуск скриптов, выполните команду:
-> `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
+### Backend & Infrastructure
+- **Server**: Custom Node.js server for WebSockets
+- **ORM**: [Prisma](https://www.prisma.io/)
+- **Database**: PostgreSQL
+- **Cache/Broker**: [Redis](https://redis.io/) (ioredis)
+- **Security**: JWT & bcryptjs
 
 ---
 
-## 🛠 Локальная разработка
+## 🚀 Быстрый старт
 
-Если вы хотите запустить проект локально (без Docker), убедитесь, что у вас установлены Node.js, PostgreSQL и Redis.
+### 1. Клонирование и установка
+```bash
+git clone https://github.com/your-username/chat-app.git
+cd chat-app
+npm install
+```
 
-1.  **Установите зависимости:**
-    ```bash
-    npm install
-    ```
+### 2. Настройка окружения
+Создайте `.env` файл (используйте `.env.docker` как шаблон для Docker или настройте локальные БД):
+```bash
+cp .env.example .env
+```
+Укажите `DATABASE_URL`, `JWT_SECRET` и параметры Redis.
 
-2.  **Настройте переменные окружения:**
-    Создайте файл `.env` в корне проекта (используйте `.env.docker` как образец):
-    ```env
-    DATABASE_URL="postgresql://user:password@localhost:5432/chat_app"
-    REDIS_URL="redis://localhost:6379"
-    JWT_SECRET="ваш-очень-секретный-ключ"
-    ```
+### 3. База данных
+```bash
+npx prisma generate
+npx prisma db push
+```
 
-3.  **Инициализируйте базу данных:**
-    ```bash
-    npx prisma db push
-    npm run db:seed
-    ```
-
-4.  **Запустите сервер разработки:**
-    ```bash
-    npm run dev
-    ```
-
----
-
-## 📝 Доступные скрипты
-
-- `npm run dev` — Запуск сервера разработки (с Socket.io).
-- `npm run build` — Сборка проекта для продакшена.
-- `npm run start` — Запуск собранного приложения.
-- `npm run db:studio` — Визуальный интерфейс для управления базой данных (Prisma Studio).
-- `npm run prisma:generate` — Генерация Prisma Client.
+### 4. Запуск в режиме разработки
+```bash
+npm run dev
+```
+Откройте [http://localhost:3000](http://localhost:3000).
 
 ---
 
+## 🐳 Запуск через Docker
+
+Самый простой способ запустить весь стек (App + Postgres + Redis):
+
+```powershell
+# Запуск всей инфраструктуры
+.\start.ps1
+
+# Полная пересборка (при изменении зависимостей)
+.\rebuild.ps1
+
+# Остановка
+.\stop.ps1
+
+# Сброс данных и миграции
+.\reset.ps1
+```
+
+**Доступные сервисы:**
+- **App**: `http://localhost:3000`
+- **PostgreSQL**: `:5432`
+- **Redis**: `:6379`
+- **Prisma Studio**: `npx prisma studio`
+
+---
+
+## 📂 Структура проекта
+
+```text
+chat-app/
+├── prisma/             # Схемы Prisma и файлы БД
+├── public/             # Статические ассеты
+├── src/
+│   ├── app/            # Next.js App Router (UI)
+│   ├── components/     # Чат-компоненты, боковая панель, сообщения
+│   ├── hooks/          # Хуки для работы с WebSocket и Auth
+│   ├── lib/            # Утилиты (Prisma, Socket config)
+│   └── context/        # Глобальное состояние чата
+├── server.js           # Основной сервер с поддержкой Socket.io
+├── Dockerfile          # Конфигурация контейнера
+└── docker-compose.yml  # Оркестрация сервисов
+```
+
+---
+
+## 📄 Лицензия
+
+MIT License. Свободно для использования и модификации.
+
+---
+<div align="center">
+⭐ Если вам понравился этот чат, поддержите проект звездой!
+</div>
